@@ -46,19 +46,24 @@ role = aws_iam_role.node.name
 policy_arn = each.value
 }
 resource "aws_eks_node_group" "this" {
-cluster_name = aws_eks_cluster.this.name
-node_group_name = "default-ng"
-node_role_arn = aws_iam_role.node.arn
-4
-subnet_ids
-= var.subnets
-scaling_config {
-desired_size = 2
-max_size
-= 3
-min_size
+  cluster_name    = aws_eks_cluster.this.name
+  node_group_name = "${var.cluster_name}-node-group"
+  node_role_arn  = aws_iam_role.eks_node.arn
+  subnet_ids     = var.subnet_ids
+
+  scaling_config {
+    desired_size = 2
+    max_size     = 3
+    min_size     = 1
+  }
+
+  instance_types = ["t3.medium"]
+  capacity_type  = "ON_DEMAND"
+
+  depends_on = [
+    aws_iam_role_policy_attachment.eks_worker_node,
+    aws_iam_role_policy_attachment.eks_cni,
+    aws_iam_role_policy_attachment.eks_ec2_container_registry
+  ]
 }
-= 1
-instance_types = [var.instance_type]
-depends_on = [aws_iam_role_policy_attachment.node_policies]
-}
+
