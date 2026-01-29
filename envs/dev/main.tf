@@ -19,7 +19,11 @@ module "eks" {
 }
 
 module "nginx" {
-  source = "../../modules/nginx"
+  source = "./modules/nginx"
 
-  kubeconfig_path = "~/.kube/config"
+  token    = module.eks.token
+  endpoint = module.eks.endpoint
+  ca       = module.eks.ca
+
+  depends_on = [module.eks]
 }
