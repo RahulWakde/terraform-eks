@@ -1,18 +1,17 @@
-provider "kubernetes" {
-  host                   = var.endpoint
-  token                  = var.token
-  cluster_ca_certificate = base64decode(var.ca)
-}
-resource "kubernetes_deployment" "nginx" {
+resource "kubernetes_namespace" "nginx" {
   metadata {
     name = "nginx"
-    labels = {
-      app = "nginx"
-    }
+  }
+}
+
+resource "kubernetes_deployment" "nginx" {
+  metadata {
+    name      = "nginx"
+    namespace = kubernetes_namespace.nginx.metadata[0].name
   }
 
   spec {
-    replicas = 1
+    replicas = 2
 
     selector {
       match_labels = {
@@ -43,7 +42,8 @@ resource "kubernetes_deployment" "nginx" {
 
 resource "kubernetes_service" "nginx" {
   metadata {
-    name = "nginx"
+    name      = "nginx"
+    namespace = kubernetes_namespace.nginx.metadata[0].name
   }
 
   spec {
