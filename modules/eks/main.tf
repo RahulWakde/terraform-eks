@@ -23,6 +23,12 @@ resource "aws_eks_cluster" "this" {
   vpc_config {
     subnet_ids = var.subnets
   }
+
+  depends_on = [
+    aws_iam_role_policy_attachment.eks_cluster_policy
+  ]
+}
+
 }
 
 
@@ -53,12 +59,16 @@ resource "aws_eks_node_group" "this" {
   node_role_arn  = aws_iam_role.eks_node.arn
   subnet_ids     = var.subnets
 
+  instance_types = [var.instance_type]
+
   scaling_config {
     desired_size = 2
     max_size     = 3
     min_size     = 1
   }
 
-  instance_types = [var.instance_type]
+  depends_on = [
+    aws_iam_role_policy_attachment.eks_node_policy
+  ]
 }
 
