@@ -1,6 +1,10 @@
-provider "aws" { region = var.region }
+provider "aws" {
+  region = var.region
+}
 
 provider "helm" {
+  # Note: Ensure there is NO equals sign after 'kubernetes'
+  # but the internal fields must be correct.
   kubernetes {
     host                   = module.eks.cluster_endpoint
     cluster_ca_certificate = base64decode(module.eks.cluster_ca)
