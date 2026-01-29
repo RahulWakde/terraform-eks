@@ -1,3 +1,11 @@
-variable "endpoint" { type = string }
-variable "ca" { type = string }
-variable "token" { type = string }
+variable "token" {
+  type = string
+}
+
+variable "endpoint" {
+  type = string
+}
+
+variable "ca" {
+  type = string
+}
