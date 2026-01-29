@@ -1,28 +1,25 @@
 module "vpc" {
-source
-vpc_name
-vpc_cidr
-= "../../modules/vpc"
-= "dev-vpc"
-= "10.0.0.0/16"
-public_subnets = ["10.0.1.0/24", "10.0.2.0/24"]
-azs
-= ["ap-south-1a", "ap-south-1b"]
+  source = "../../modules/vpc"
+
+  vpc_cidr = "10.0.0.0/16"
+  azs      = ["ap-south-1a", "ap-south-1b"]
+
+  public_subnets  = ["10.0.1.0/24", "10.0.2.0/24"]
+  private_subnets = ["10.0.11.0/24", "10.0.12.0/24"]
 }
+
 module "eks" {
-source
-cluster_name
-subnets
-= "../../modules/eks"
-= "dev-eks"
-= module.vpc.public_subnets
-instance_type = "t3.medium"
+  source = "../../modules/eks"
+
+  cluster_name    = "dev-eks-cluster"
+  cluster_version = "1.29"
+
+  subnet_ids = module.vpc.private_subnet_ids
+  vpc_id     = module.vpc.vpc_id
 }
+
 module "nginx" {
-source
-= "../../modules/nginx"
-endpoint = module.eks.endpoint
-ca
-= module.eks.ca
-token
+  source = "../../modules/nginx"
+
+  kubeconfig_path = "~/.kube/config"
 }
