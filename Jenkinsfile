@@ -1,29 +1,74 @@
 pipeline {
-  agent any
+    agent any
 
-  stages {
-    stage('Checkout') {
-      steps {
-        checkout scm
-      }
+    environment {
+        AWS_DEFAULT_REGION = "ap-south-1"
     }
 
-    stage('Terraform Init') {
-      steps {
-        sh 'terraform init -input=false'
-      }
+    stages {
+
+        stage('Checkout Code') {
+            steps {
+                git branch: 'main',
+                    url: 'https://github.com/RahulWakde/terraform-eks.git',
+                    credentialsId: 'github-creds'
+            }
+        }
+
+        stage('Terraform Init') {
+            steps {
+                withCredentials([[
+                    $class: 'AmazonWebServicesCredentialsBinding',
+                    credentialsId: 'aws-creds'
+                ]]) {
+                    sh '''
+                      terraform init -input=false -reconfigure
+                    '''
+                }
+            }
+        }
+
+        stage('Terraform Validate') {
+            steps {
+                withCredentials([[
+                    $class: 'AmazonWebServicesCredentialsBinding',
+                    credentialsId: 'aws-creds'
+                ]]) {
+                    sh 'terraform validate'
+                }
+            }
+        }
+
+        stage('Terraform Plan') {
+            steps {
+                withCredentials([[
+                    $class: 'AmazonWebServicesCredentialsBinding',
+                    credentialsId: 'aws-creds'
+                ]]) {
+                    sh 'terraform plan'
+                }
+            }
+        }
+
+        stage('Terraform Apply (Manual Approval)') {
+            steps {
+                input message: 'Apply Terraform changes to AWS?'
+                withCredentials([[
+                    $class: 'AmazonWebServicesCredentialsBinding',
+                    credentialsId: 'aws-creds'
+                ]]) {
+                    sh 'terraform apply -auto-approve'
+                }
+            }
+        }
     }
 
-    stage('Terraform Validate') {
-      steps {
-        sh 'terraform validate'
-      }
+    post {
+        success {
+            echo 'EKS infrastructure deployed successfully 🚀'
+        }
+        failure {
+            echo 'Pipeline failed ❌ Check logs'
+        }
     }
-
-    stage('Terraform Plan') {
-      steps {
-        sh 'terraform plan'
-      }
-    }
-  }
 }
