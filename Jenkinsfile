@@ -10,7 +10,7 @@ pipeline {
         }
         stage('Terraform Init') {
             steps {
-                dir("${TF_DIR}") { sh 'terraform init' }
+                dir("${TF_DIR}") { sh 'terraform init -upgrade' }
             }
         }
         stage('Terraform Plan') {
