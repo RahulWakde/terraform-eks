@@ -13,7 +13,7 @@ pipeline {
 
  stage('Checkout Code') {
   steps {
-    git branch: 'eks-setup',
+    git branch: 'main',
         credentialsId: 'github-creds',
         url: 'https://github.com/RahulWakde/terraform-eks.git'
   }
