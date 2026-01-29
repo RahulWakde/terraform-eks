@@ -1,3 +1,8 @@
+provider "kubernetes" {
+  host                   = var.endpoint
+  token                  = var.token
+  cluster_ca_certificate = base64decode(var.ca)
+}
 resource "kubernetes_deployment" "nginx" {
   metadata {
     name = "nginx"
