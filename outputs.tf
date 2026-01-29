@@ -1,3 +1,3 @@
-output "cluster_name" {
-  value = module.eks.cluster_name
+output "public_subnets" {
+  value = aws_subnet.public[*].id
 }
