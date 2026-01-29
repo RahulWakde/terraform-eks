@@ -11,13 +11,14 @@ pipeline {
     disableConcurrentBuilds()
   }
 
-  stages {
+ stage('Checkout Code') {
+  steps {
+    git branch: 'eks-setup',
+        credentialsId: 'github-creds',
+        url: 'https://github.com/RahulWakde/terraform-eks.git'
+  }
+}
 
-    stage('Checkout Code') {
-      steps {
-        checkout scm
-      }
-    }
 
     stage('Terraform Init') {
       steps {
