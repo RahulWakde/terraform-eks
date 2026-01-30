@@ -3,6 +3,6 @@
 This repository contains Terraform code to provision AWS infrastructure using a modular approach, including:
 
 - VPC
-E- KS cluster
+- EKS cluster
 - NGINX setup 
 - CI/CD automation using Jenkins
