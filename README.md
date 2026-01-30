@@ -1,4 +1,4 @@
-#Terraform EKS Infrastructure with Jenkins CI/CD
+# Terraform EKS Infrastructure with Jenkins CI/CD
 
 This repository contains Terraform code to provision AWS infrastructure using a modular approach, including:
 
